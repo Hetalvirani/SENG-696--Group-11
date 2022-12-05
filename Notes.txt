@@ -1,0 +1,66 @@
+port error (busy port) 1099 is busy
+
+C:\Users\Jahnavi>netstat -a -o
+
+Active Connections
+
+  Proto  Local Address          Foreign Address        State           PID
+  TCP    0.0.0.0:135            jahnavi:0              LISTENING       1764
+  TCP    0.0.0.0:445            jahnavi:0              LISTENING       4
+  TCP    0.0.0.0:1099           jahnavi:0              LISTENING       26364
+  TCP    0.0.0.0:2869           jahnavi:0              LISTENING       4
+  TCP    0.0.0.0:5040           jahnavi:0              LISTENING       11548
+
+
+goto> WIN+Run --> cmd
+
+C:\Users\Jahnavi>taskkill /pid   2332 /f
+SUCCESS: The process with PID 26364 has been terminated.
+
+C:\Users\Jahnavi>
+
+
+
+-gui Interface-1:agent.InterfaceAgent;Authorization-1:agent.AuthorizationAgent;Classifier-1:agent.ClassifierAgent;Compare-1:agent.CompareAgent;Service-1:agent.ServiceAgent
+
+
+
+import jade.core.Agent;
+import jade.core.behaviours.*;
+import java.util.*;
+public class BookSellerAgent extends Agent {
+ // The catalogue of books for sale (maps the title of a book to its price)
+ private Hashtable catalogue;
+ // The GUI by means of which the user can add books in the catalogue
+ private BookSellerGui myGui;
+ // Put agent initializations here
+ protected void setup() {
+ // Create the catalogue
+ catalogue = new Hashtable();
+ // Create and show the GUI
+ myGui = new BookSellerGui(this);
+ myGui.show();
+ // Add the behaviour serving requests for offer from buyer agents
+ addBehaviour(new OfferRequestsServer());
+ // Add the behaviour serving purchase orders from buyer agents
+ addBehaviour(new PurchaseOrdersServer());
+ }
+ // Put agent clean-up operations here
+ protected void takeDown() {
+15
+ // Close the GUI
+ myGui.dispose();
+ // Printout a dismissal message
+ System.out.println(“Seller-agent “+getAID().getName()+” terminating.”);
+ }
+ /**
+ This is invoked by the GUI when the user adds a new book for sale
+ */
+ public void updateCatalogue(final String title, final int price) {
+ addBehaviour(new OneShotBehaviour() {
+ public void action() {
+ catalogue.put(title, new Integer(price));
+ }
+ } );
+ }
+}

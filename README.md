@@ -1,1 +1,1 @@
-# SENG-696--Group-11
+# SENG696_PROJECT
